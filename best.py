@@ -3,14 +3,17 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-r = 1
-k_0 = -0
-m_0 = 0.7
-n = 0.9
+CIRCLE_RADIUS = 1
+INPUT_SLOPE = 0
+INPUT_HEIGHT = 0.7
+REFRACTION_INDEX = 0.9
+
+k_0 = INPUT_SLOPE
+m_0 = INPUT_HEIGHT
 
 x, y = sp.symbols('x y')
 line_eq = sp.Eq(y, k_0 * x + m_0)
-circle_eq = sp.Eq(x**2 + y**2, r**2)
+circle_eq = sp.Eq(x**2 + y**2, CIRCLE_RADIUS**2)
 intersections = sp.solve((line_eq, circle_eq), (x, y))
 if not intersections:
     print("No first intersections found.")
@@ -20,7 +23,7 @@ q_0, w_0 = intersections[0]
 tangent_slope = -q_0 / w_0
 a_0 = w_0 / q_0
 b_0 = 0
-k_1 = math.tan(math.asin(math.sin(abs(math.atan(a_0) - math.atan(k_0)))/n) + math.atan(a_0) - math.pi)
+k_1 = math.tan(math.asin(math.sin(abs(math.atan(a_0) - math.atan(k_0)))/REFRACTION_INDEX) + math.atan(a_0) - math.pi)
 m_1 = w_0 - k_1 * q_0
 
 
@@ -53,7 +56,7 @@ if not intersections:
 q_2, w_2 = intersections[1]
 a_2 = w_2 / q_2
 b_2 = 0
-k_3 = math.tan(math.atan(a_2) - math.asin(math.sin(abs(math.atan(a_2) - math.atan(k_2)))*n))
+k_3 = math.tan(math.atan(a_2) - math.asin(math.sin(abs(math.atan(a_2) - math.atan(k_2)))*REFRACTION_INDEX))
 m_3 = w_2 - k_3 * q_2
 
 
@@ -70,7 +73,8 @@ x_circle = np.cos(theta)
 y_circle = np.sin(theta)
 plt.plot(x_circle, y_circle, color='black')
 
-x_line = np.linspace(float(q_0 - delta), float(q_0), 100)
+fix = 2*delta*math.cos(math.atan(k_0))
+x_line = np.linspace(float(q_0 - fix), float(q_0), 100)
 y_line = [k_0 * x + m_0 for x in x_line]
 plt.plot(x_line, y_line, color='red')
 
@@ -82,7 +86,8 @@ x_line = np.linspace(float(q_2), float(q_1), 100)
 y_line = [k_2 * x + m_2 for x in x_line]
 plt.plot(x_line, y_line, color='red')
 
-x_line = np.linspace(float(q_2), float(q_2 + delta), 100)
+fix = 2*delta*math.cos(math.atan(k_3))
+x_line = np.linspace(float(q_2), float(q_2 + fix), 100)
 y_line = [k_3 * x + m_3 for x in x_line]
 plt.plot(x_line, y_line, color='red')
 
