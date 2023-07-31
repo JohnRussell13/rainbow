@@ -3,11 +3,21 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+# consts
 CIRCLE_RADIUS = 1
 INPUT_SLOPE = 0
 INPUT_HEIGHT = 0.7
 REFRACTION_INDEX = 0.9
+POINTS = 100
+DELTA = 0.8
 
+# plot circle
+theta = np.linspace(0, 2*np.pi, POINTS)
+x_circle = CIRCLE_RADIUS*np.cos(theta)
+y_circle = CIRCLE_RADIUS*np.sin(theta)
+plt.plot(x_circle, y_circle, color='black')
+
+# mess
 k_0 = INPUT_SLOPE
 m_0 = INPUT_HEIGHT
 
@@ -66,14 +76,8 @@ total_diff = math.atan(k_0) - math.atan(k_3)
 print(abs(math.degrees(total_diff)))
 
 
-points = 100
-delta = 0.8
-theta = np.linspace(0, 2*np.pi, points)
-x_circle = np.cos(theta)
-y_circle = np.sin(theta)
-plt.plot(x_circle, y_circle, color='black')
 
-fix = 2*delta*math.cos(math.atan(k_0))
+fix = 2*DELTA*math.cos(math.atan(k_0))
 x_line = np.linspace(float(q_0 - fix), float(q_0), 100)
 y_line = [k_0 * x + m_0 for x in x_line]
 plt.plot(x_line, y_line, color='red')
@@ -86,22 +90,22 @@ x_line = np.linspace(float(q_2), float(q_1), 100)
 y_line = [k_2 * x + m_2 for x in x_line]
 plt.plot(x_line, y_line, color='red')
 
-fix = 2*delta*math.cos(math.atan(k_3))
+fix = 2*DELTA*math.cos(math.atan(k_3))
 x_line = np.linspace(float(q_2), float(q_2 + fix), 100)
 y_line = [k_3 * x + m_3 for x in x_line]
 plt.plot(x_line, y_line, color='red')
 
-fix = delta*math.cos(math.atan(a_0))
+fix = DELTA*math.cos(math.atan(a_0))
 x_line = np.linspace(float(q_0 - fix), float(q_0 + fix), 100)
 y_line = [a_0 * x + b_0 for x in x_line]
 plt.plot(x_line, y_line, color='blue', linestyle='dotted')
 
-fix = delta*math.cos(math.atan(a_1))
+fix = DELTA*math.cos(math.atan(a_1))
 x_line = np.linspace(float(q_1 - fix), float(q_1 + fix), 100)
 y_line = [a_1 * x + b_1 for x in x_line]
 plt.plot(x_line, y_line, color='green', linestyle='dotted')
 
-fix = delta*math.cos(math.atan(a_2))
+fix = DELTA*math.cos(math.atan(a_2))
 x_line = np.linspace(float(q_2 - fix), float(q_2 + fix), 100)
 y_line = [a_2 * x + b_2 for x in x_line]
 plt.plot(x_line, y_line, color='blue', linestyle='dotted')
