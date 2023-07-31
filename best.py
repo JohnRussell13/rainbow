@@ -3,6 +3,40 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+def refraction(k_in, m_in, first, q_old, w_old, refraction_index):
+    x, y = sp.symbols('x y')
+    line_eq = sp.Eq(y, k_in * x + m_in)
+    circle_eq = sp.Eq(x**2 + y**2, CIRCLE_RADIUS**2)
+    intersections = sp.solve((line_eq, circle_eq), (x, y))
+
+    if not intersections:
+        print("No first intersections found.")
+        exit
+
+    if first:
+        q, w = intersections[0]
+    elif round(intersections[0][0], 5) == round(q_old, 5) and round(intersections[0][1], 5) == round(w_old, 5):
+        q, w = intersections[1]
+    else:
+        q, w = intersections[0]
+        
+    k_normal = w / q
+    k_out = math.tan(math.asin(math.sin(abs(math.atan(k_normal) - math.atan(k_in)))*refraction_index) + math.atan(k_normal) - math.pi)
+    m_out = w - k_out * q
+
+
+    fix = 2*DELTA*math.cos(math.atan(k_in))
+    x_line = np.linspace(float(q - fix), float(q), 100)
+    y_line = [k_in * x + m_in for x in x_line]
+    plt.plot(x_line, y_line, color='red')
+
+    fix = DELTA*math.cos(math.atan(k_normal))
+    x_line = np.linspace(float(q - fix), float(q + fix), 100)
+    y_line = [k_normal * x for x in x_line]
+    plt.plot(x_line, y_line, color='blue', linestyle='dotted')
+
+    return k_out, m_out, q, w
+
 # consts
 CIRCLE_RADIUS = 1.2
 INPUT_SLOPE = 0
@@ -17,30 +51,15 @@ x_circle = CIRCLE_RADIUS*np.cos(theta)
 y_circle = CIRCLE_RADIUS*np.sin(theta)
 plt.plot(x_circle, y_circle, color='black')
 
-# mess
-k_0 = INPUT_SLOPE
-m_0 = INPUT_HEIGHT
+
+
+k_1, m_1, q_0, w_0 = refraction(INPUT_SLOPE, INPUT_HEIGHT, True, 0, 0, 1/REFRACTION_INDEX)
+
+
+
 
 x, y = sp.symbols('x y')
-line_eq = sp.Eq(y, k_0 * x + m_0)
 circle_eq = sp.Eq(x**2 + y**2, CIRCLE_RADIUS**2)
-intersections = sp.solve((line_eq, circle_eq), (x, y))
-if not intersections:
-    print("No first intersections found.")
-    exit
-
-q_0, w_0 = intersections[0]
-
-tangent_slope = -q_0 / w_0
-a_0 = w_0 / q_0
-b_0 = 0
-k_1 = math.tan(math.asin(math.sin(abs(math.atan(a_0) - math.atan(k_0)))/REFRACTION_INDEX) + math.atan(a_0) - math.pi)
-m_1 = w_0 - k_1 * q_0
-
-
-
-
-
 line_eq = sp.Eq(y, k_1 * x + m_1)
 intersections = sp.solve((line_eq, circle_eq), (x, y))
 
@@ -83,16 +102,12 @@ m_3 = w_2 - k_3 * q_2
 
 
 
-total_diff = math.atan(k_0) - math.atan(k_3)
+total_diff = math.atan(INPUT_SLOPE) - math.atan(k_3)
 
 print(abs(math.degrees(total_diff)))
 
 
 
-fix = 2*DELTA*math.cos(math.atan(k_0))
-x_line = np.linspace(float(q_0 - fix), float(q_0), 100)
-y_line = [k_0 * x + m_0 for x in x_line]
-plt.plot(x_line, y_line, color='red')
 
 x_line = np.linspace(float(q_0), float(q_1), 100)
 y_line = [k_1 * x + m_1 for x in x_line]
@@ -106,11 +121,6 @@ fix = 2*DELTA*math.cos(math.atan(k_3))
 x_line = np.linspace(float(q_2), float(q_2 + fix), 100)
 y_line = [k_3 * x + m_3 for x in x_line]
 plt.plot(x_line, y_line, color='red')
-
-fix = DELTA*math.cos(math.atan(a_0))
-x_line = np.linspace(float(q_0 - fix), float(q_0 + fix), 100)
-y_line = [a_0 * x + b_0 for x in x_line]
-plt.plot(x_line, y_line, color='blue', linestyle='dotted')
 
 fix = DELTA*math.cos(math.atan(a_1))
 x_line = np.linspace(float(q_1 - fix), float(q_1 + fix), 100)
