@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # consts
-CIRCLE_RADIUS = 1
+CIRCLE_RADIUS = 1.2
 INPUT_SLOPE = 0
 INPUT_HEIGHT = 0.7
 REFRACTION_INDEX = 0.9
@@ -27,6 +27,7 @@ circle_eq = sp.Eq(x**2 + y**2, CIRCLE_RADIUS**2)
 intersections = sp.solve((line_eq, circle_eq), (x, y))
 if not intersections:
     print("No first intersections found.")
+    exit
 
 q_0, w_0 = intersections[0]
 
@@ -45,8 +46,15 @@ intersections = sp.solve((line_eq, circle_eq), (x, y))
 
 if not intersections:
     print("No first intersections found.")
+    exit
 
-q_1, w_1 = intersections[1]
+
+
+if round(intersections[0][0], 5) == round(q_0, 5) and round(intersections[0][1], 5) == round(w_0, 5):
+    q_1, w_1 = intersections[1]
+else:
+    q_1, w_1 = intersections[0]
+    
 
 a_1 = -q_1 / w_1
 b_1 = w_1 - a_1 * q_1
@@ -62,8 +70,12 @@ line_eq = sp.Eq(y, k_2 * x + m_2)
 intersections = sp.solve((line_eq, circle_eq), (x, y))
 if not intersections:
     print("No first intersections found.")
+    exit
 
-q_2, w_2 = intersections[1]
+if round(intersections[0][0], 5) == round(q_1, 5) and round(intersections[0][1], 5) == round(w_1, 5):
+    q_2, w_2 = intersections[1]
+else:
+    q_2, w_2 = intersections[0]
 a_2 = w_2 / q_2
 b_2 = 0
 k_3 = math.tan(math.atan(a_2) - math.asin(math.sin(abs(math.atan(a_2) - math.atan(k_2)))*REFRACTION_INDEX))
